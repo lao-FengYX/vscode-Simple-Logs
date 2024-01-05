@@ -140,8 +140,6 @@ const blameProcess = (obj: { [key: string]: string[][] }): void => {
       } else {
         if (name.includes('-mail')) {
           temp[name] = val.slice(1, val.length - 1)
-        } else if (name.includes('time')) {
-          temp[name] = formatDate(new Date(), new Date(parseInt(val) * 1000))
         } else {
           temp[name] = val
         }
@@ -172,7 +170,8 @@ const selectChange = (path: string, removeDecoration = true): void => {
   removeDecoration ? view.removeDclearecoration() : null
 
   let line = editor.selection.active.line + 1
-  if (line >= editor.document.lineCount) {
+  let text = editor.document.lineAt(line - 1).text.trim()
+  if (line >= editor.document.lineCount && text === '') {
     return
   }
 
@@ -183,7 +182,9 @@ const selectChange = (path: string, removeDecoration = true): void => {
         findObj.committer === userInfo.name && findObj['committer-mail'] === userInfo.email
           ? 'You'
           : findObj.committer
-      }, ${findObj['committer-time']} • ${findObj.summary}`,
+      }, ${formatDate(new Date(), new Date(parseInt(findObj['committer-time']) * 1000))} • ${
+        findObj.summary
+      }`,
       editor,
       line - 1
     )
