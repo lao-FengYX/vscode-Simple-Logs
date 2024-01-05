@@ -1,23 +1,50 @@
 {
-  "name": "test",
-  "displayName": "test",
-  "description": "test",
+  "name": "simple-logs",
+  "displayName": "Simple Logs",
+  "description": "inline git log",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.75.0"
   },
+  "author": "Lao Feng",
+  "publisher": "LaoFeng",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "simple-logs",
+    "inline git log",
+    "git blame",
+    "git inline log",
+    "git"
+  ],
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "test.helloWorld",
-        "title": "Hello World"
+    "configuration": {
+      "title": "Simple Logs",
+      "properties": {
+        "simple-logs.fontColor": {
+          "type": "string",
+          "description": "%simple-logs.fontColor%"
+        },
+        "simple-logs.backgroundColor": {
+          "type": "string",
+          "description": "%simple-logs.backgroundColor%"
+        },
+        "simple-logs.excludePath": {
+          "type": "string",
+          "default": "node_modules,dist",
+          "description": "%simple-logs.excludePath%"
+        }
       }
-    ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "yarn run package",
@@ -43,5 +70,6 @@
     "webpack-cli": "^5.1.4",
     "@vscode/test-cli": "^0.0.4",
     "@vscode/test-electron": "^2.3.8"
-  }
+  },
+  "license": "MIT"
 }

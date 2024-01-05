@@ -1,0 +1,5 @@
+{
+  "simple-logs.fontColor": "字体颜色",
+  "simple-logs.backgroundColor": "背景颜色",
+  "simple-logs.excludePath": "忽略的路径 (请以逗号分隔)"
+}
