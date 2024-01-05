@@ -6,16 +6,26 @@
   "engines": {
     "vscode": "^1.75.0"
   },
-  "author": "Lao Feng",
+  "icon": "./public/simple-logs.png",
+  "author": {
+    "name": "Lao Feng",
+    "email": "laofyx@163.com"
+  },
   "publisher": "LaoFeng",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/lao-FengYX/vscode-simple-logs"
+  },
+  "bugs": {
+    "email": "laofyx@163.com",
+    "url": "https://github.com/lao-FengYX/vscode-simple-logs/issues"
   },
   "keywords": [
-    "simple-logs",
+    "simple logs",
     "inline git log",
+    "simple git inline logs",
     "git blame",
+    "git log",
     "git inline log",
     "git"
   ],
@@ -46,6 +56,9 @@
       }
     }
   },
+  "extensionDependencies": [
+    "vscode.git"
+  ],
   "scripts": {
     "vscode:prepublish": "yarn run package",
     "compile": "webpack",

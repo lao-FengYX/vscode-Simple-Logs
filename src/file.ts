@@ -49,10 +49,13 @@ export const handlerFile = async (filePath: string, removeDecoration = true): Pr
   let parentPath = workspace.workspaceFolders?.[0].uri.fsPath || ''
   if (!validParentPathStart(parentPath, filePath)) return
 
-  if (excludePath.some(i => filePath.includes(i))) return
+  if (excludePath.some(i => filePath.includes(i.trim()))) return
 
-  let gitPath = getGitFolder(filePath)
-  if (!gitPath) return
+  let gitPath = await getGitFolder(filePath)
+  if (!gitPath) {
+    Logger.info('No git directory found')
+    return
+  }
 
   if (!userInfo) {
     userInfo = await getUserInfo()
@@ -190,7 +193,8 @@ const selectChange = (path: string, removeDecoration = true): void => {
 const delayFn = debounce((editor: TextEditor) => {
   handlerFile(editor.document.fileName, false)
   isEdit = false
-}, 300)
+  // 1000 毫秒以上拿到的数据才是新的
+}, 1100)
 
 let isEdit = false
 

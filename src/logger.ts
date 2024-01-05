@@ -10,7 +10,7 @@ export class Logger {
   }
 
   private constructor() {
-    this.out = window.createOutputChannel('test', {
+    this.out = window.createOutputChannel('simple-logs', {
       log: true
     })
   }
