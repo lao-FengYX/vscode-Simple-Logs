@@ -1,8 +1,9 @@
 # Change Log
+### 0.0.2
+调整存储时间和文档最后一行有内容不显示的问题
 
-All notable changes to the "test" extension will be documented in this file.
-
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+### 0.0.1
+增加字体颜色和背景颜色的功能
 
 ## [Unreleased]
 
