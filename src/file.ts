@@ -193,11 +193,8 @@ const selectChange = (path: string, removeDecoration = true): void => {
 
 const delayFn = debounce((editor: TextEditor) => {
   handlerFile(editor.document.fileName, false)
-  isEdit = false
   // 1000 毫秒以上拿到的数据才是新的
 }, 1100)
-
-let isEdit = false
 
 dispose = Disposable.from(
   view,
@@ -216,7 +213,7 @@ dispose = Disposable.from(
     if (scheme === 'file' || scheme === 'untitled') {
       let parentPath = workspace.workspaceFolders?.[0].uri.fsPath || ''
       const path = getRelativePath(textEditor.document.fileName, parentPath)
-      if (!isEdit) selectChange(path)
+      selectChange(path)
     }
   }),
   // workspace.onDidSaveTextDocument(() => {
@@ -238,7 +235,6 @@ dispose = Disposable.from(
     if (!editor) return
     if (contentChanges.length) {
       if (editor?.document === document) {
-        isEdit = true
         view.removeDclearecoration()
         delayFn(editor)
       }
