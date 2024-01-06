@@ -13,6 +13,6 @@
 
 **References**
 
-此插件参考了 [Git Blame](https://marketplace.visualstudio.com/items?itemName=waderyan.gitblame) , 如果可以的话, 请支持他
+此插件参考了 [Git Blame](https://marketplace.visualstudio.com/items?itemName=waderyan.gitblame) , 如果可以的话, 请支持它
 
 **Enjoy!**

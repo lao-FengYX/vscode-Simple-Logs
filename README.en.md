@@ -13,6 +13,6 @@ If the file is newly added, it will not be tracked, and if it is not submitted, 
 
 **References**
 
-This plugin references [Git Blame](https://marketplace.visualstudio.com/items?itemName=waderyan.gitblame) , If possible, please support him
+This plugin references [Git Blame](https://marketplace.visualstudio.com/items?itemName=waderyan.gitblame) , If possible, please support it
 
 **Enjoy!**
