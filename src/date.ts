@@ -22,18 +22,17 @@ const timeUints: [Intl.RelativeTimeFormatUnit, number][] = [
  * 格式化日期差异为易读的时间单位
  * @param now 当前日期
  * @param before 之前的日期
+ * @param useCustomaryWording 是否使用当地习惯用语
  * @returns 相对当前日期的时间
  */
-export function formatDate(now: Date, before: Date): string {
+export function formatDate(now: Date, before: Date, useCustomaryWording = true): string {
   const diffMilliseconds = now.getTime() - before.getTime()
 
   for (const [unit, timeStamp] of timeUints) {
     if (diffMilliseconds > timeStamp) {
-      return new Intl.RelativeTimeFormat(env.language, { numeric: 'auto' }).format(
-        // { numeric: 'auto' } 习惯的措辞
-        -1 * Math.round(diffMilliseconds / timeStamp),
-        unit
-      )
+      return new Intl.RelativeTimeFormat(env.language, {
+        numeric: useCustomaryWording ? 'auto' : 'always'
+      }).format(-1 * Math.round(diffMilliseconds / timeStamp), unit)
     }
   }
   return env.language.toLowerCase() === 'zh-cn' ? '刚刚' : 'right now'

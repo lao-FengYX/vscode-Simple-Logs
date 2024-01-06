@@ -20,6 +20,7 @@ export let dispose: Disposable
 
 let view = new View()
 let excludePath = getConfig('excludePath').split(',')
+let useCustomaryWording = getConfig('useCustomaryWording')
 
 type LineInfo = {
   'hash': string
@@ -180,9 +181,11 @@ const selectChange = (path: string, removeDecoration = true): void => {
         findObj.committer === userInfo.name && findObj['committer-mail'] === userInfo.email
           ? 'You'
           : findObj.committer
-      }, ${formatDate(new Date(), new Date(parseInt(findObj['committer-time']) * 1000))} • ${
-        findObj.summary
-      }`,
+      }, ${formatDate(
+        new Date(),
+        new Date(parseInt(findObj['committer-time']) * 1000),
+        useCustomaryWording
+      )} • ${findObj.summary}`,
       editor,
       line - 1
     )
@@ -202,6 +205,7 @@ dispose = Disposable.from(
   workspace.onDidChangeConfiguration(e => {
     if (e.affectsConfiguration('simple-logs')) {
       excludePath = getConfig('excludePath').split(',')
+      useCustomaryWording = getConfig('useCustomaryWording')
     }
   }),
   window.onDidChangeActiveTextEditor(e => {

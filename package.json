@@ -52,6 +52,11 @@
           "type": "string",
           "default": "node_modules,dist",
           "description": "%simple-logs.excludePath%"
+        },
+        "simple-logs.useCustomaryWording": {
+          "type": "boolean",
+          "default": false,
+          "description": "%simple-logs.useCustomaryWording%"
         }
       }
     }

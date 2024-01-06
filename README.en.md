@@ -10,6 +10,8 @@ If the file is newly added, it will not be tracked, and if it is not submitted, 
 
 * Can customize font colors
 * Customizable background color
+* Can customize ignored paths
+* Can be set to use local idioms
 
 **References**
 
