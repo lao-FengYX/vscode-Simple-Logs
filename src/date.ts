@@ -29,7 +29,8 @@ export function formatDate(now: Date, before: Date): string {
 
   for (const [unit, timeStamp] of timeUints) {
     if (diffMilliseconds > timeStamp) {
-      return new Intl.RelativeTimeFormat(env.language).format( // { numeric: 'auto' } 习惯的措辞
+      return new Intl.RelativeTimeFormat(env.language, { numeric: 'auto' }).format(
+        // { numeric: 'auto' } 习惯的措辞
         -1 * Math.round(diffMilliseconds / timeStamp),
         unit
       )
