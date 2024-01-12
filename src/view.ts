@@ -32,11 +32,6 @@ export class View {
     })
   }
 
-  public dispose(): void {
-    this.configChange.dispose()
-    this.decorationType.dispose()
-  }
-
   public async createTextDecoration(text: string, editor: TextEditor, line: number): Promise<void> {
     // this.removeDclearecoration()
     let range = editor.document.lineAt(line).range
@@ -59,5 +54,10 @@ export class View {
   public removeDclearecoration(): void {
     const editor = getActiveEditor()
     editor?.setDecorations?.(this.decorationType, [])
+  }
+
+  public dispose(): void {
+    this.configChange.dispose()
+    this.decorationType.dispose()
   }
 }
