@@ -57,6 +57,11 @@
           "type": "boolean",
           "default": false,
           "description": "%simple-logs.useCustomaryWording%"
+        },
+        "simple-logs.showInfo": {
+          "type": "string",
+          "default": "${committer}, ${committer-time} • ${summary}",
+          "description": "%simple-logs.showInfo%"
         }
       }
     }

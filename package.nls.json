@@ -2,5 +2,6 @@
   "simple-logs.fontColor": "font color",
   "simple-logs.backgroundColor": "backgroundColor",
   "simple-logs.excludePath": "Ignored paths (separated by commas)",
-  "simple-logs.useCustomaryWording": "Using local customary wording"
+  "simple-logs.useCustomaryWording": "Using local customary wording",
+  "simple-logs.showInfo": "Custom Display Information"
 }

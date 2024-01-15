@@ -11,6 +11,7 @@ type Config = {
   backgroundColor: string
   excludePath: string
   useCustomaryWording: boolean
+  showInfo: string
 }
 
 /** 获取配置 */

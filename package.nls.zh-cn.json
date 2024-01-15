@@ -2,5 +2,6 @@
   "simple-logs.fontColor": "字体颜色",
   "simple-logs.backgroundColor": "背景颜色",
   "simple-logs.excludePath": "忽略的路径 (请以逗号分隔)",
-  "simple-logs.useCustomaryWording": "使用当地习惯的措辞"
+  "simple-logs.useCustomaryWording": "使用当地习惯的措辞",
+  "simple-logs.showInfo": "自定义显示信息"
 }

@@ -16,6 +16,7 @@ let userInfo: UserInfo
 let view = new View()
 let excludePath = getConfig('excludePath').split(',')
 let useCustomaryWording = getConfig('useCustomaryWording')
+let showInfo = getConfig('showInfo')
 
 type LineInfo = {
   'hash': string
@@ -53,6 +54,7 @@ export class File {
         if (e.affectsConfiguration('simple-logs')) {
           excludePath = getConfig('excludePath').split(',')
           useCustomaryWording = getConfig('useCustomaryWording')
+          showInfo = getConfig('showInfo')
         }
       }),
       window.onDidChangeActiveTextEditor(e => {
@@ -242,20 +244,37 @@ export class File {
 
     let findObj = map?.get(line + '')
     if (findObj) {
-      view.createTextDecoration(
-        `${
-          findObj.committer === userInfo.name && findObj['committer-mail'] === userInfo.email
-            ? 'You'
-            : findObj.committer
-        }, ${formatDate(
-          new Date(),
-          new Date(parseInt(findObj['committer-time']) * 1000),
-          useCustomaryWording
-        )} • ${findObj.summary}`,
-        editor,
-        line - 1
+      let info = showInfo.replace(/\$\{(.*?)\}/g, (_, key) => {
+        if (findObj) {
+          return this.organizeInformation(findObj, key?.trim() ?? key)
+        }
+        return ''
+      })
+
+      view.createTextDecoration(info, editor, line - 1)
+    }
+  }
+
+  private organizeInformation(findObj: LineInfo, key: string): string {
+    let keys = Object.keys(this.commitInfo())
+    if (!keys.includes(key)) {
+      return ''
+    }
+    if (['committer', 'author'].includes(key)) {
+      if (findObj?.[key] === userInfo.name && findObj?.[key + '-mail'] === userInfo.email) {
+        return 'You'
+      } else {
+        return findObj?.[key] ?? ''
+      }
+    }
+    if (key.includes('-time')) {
+      return formatDate(
+        new Date(),
+        findObj ? new Date(parseInt(findObj[key]) * 1000) : new Date(),
+        useCustomaryWording
       )
     }
+    return `${findObj?.[key] ?? ''}`
   }
 
   public dispose(): void {
