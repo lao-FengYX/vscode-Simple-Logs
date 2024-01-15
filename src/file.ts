@@ -110,7 +110,9 @@ export class File {
     let parentPath = workspace.workspaceFolders?.[0].uri.fsPath || ''
     if (!validParentPathStart(parentPath, filePath)) return
 
-    if (excludePath.some(i => filePath.includes(i.trim()))) return
+    // 截取盘符后面的路径进行比对
+    let dividePath = filePath?.split('\\')?.slice(1) ?? []
+    if (excludePath.some(i => dividePath.includes(i.trim()))) return
 
     let gitPath = await getGitFolder(filePath)
     if (!gitPath) {
