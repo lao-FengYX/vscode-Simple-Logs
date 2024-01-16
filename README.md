@@ -30,6 +30,18 @@
 | committer-tz   | -          | 提交者的时区     |
 | summary        | -          | 提交的信息       |
 
+时间不支持设置长度
+
+**Example**
+
+默认
+
+`${committer}, ${committer-time} • ${summary}`
+
+限制显示长度为 10
+
+`${summary | 10}`
+
 **References**
 
 此插件参考了 [Git Blame](https://marketplace.visualstudio.com/items?itemName=waderyan.gitblame) , 如果可以的话, 请支持它

@@ -255,7 +255,10 @@ export class File {
     }
   }
 
-  private organizeInformation(findObj: LineInfo, key: string): string {
+  private organizeInformation(findObj: LineInfo, token: string): string {
+    let key = token.split('|')[0].trim()
+    let length = token.split('|')?.[1]?.trim?.() ?? undefined
+
     let keys = Object.keys(this.commitInfo())
     if (!keys.includes(key)) {
       return ''
@@ -264,7 +267,7 @@ export class File {
       if (findObj?.[key] === userInfo.name && findObj?.[key + '-mail'] === userInfo.email) {
         return 'You'
       } else {
-        return findObj?.[key] ?? ''
+        return length ? findObj?.[key]?.slice(0, parseInt(length)) ?? '' : findObj?.[key] ?? ''
       }
     }
     if (key.includes('-time')) {
@@ -274,7 +277,7 @@ export class File {
         useCustomaryWording
       )
     }
-    return `${findObj?.[key] ?? ''}`
+    return length ? findObj?.[key]?.slice(0, parseInt(length)) ?? '' : findObj?.[key] ?? ''
   }
 
   public dispose(): void {

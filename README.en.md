@@ -30,6 +30,18 @@ If the file is newly added, it will not be tracked, and if it is not submitted, 
 | committer-tz       | -          | Committer's time zone          |
 | summary            | -          | Submitted information          |
 
+Time does not support setting length
+
+**Example**
+
+Default
+
+`${committer}, ${committer-time} • ${summary}`
+
+Limit display length to 10
+
+`${summary | 10}`
+
 **References**
 
 This plugin references [Git Blame](https://marketplace.visualstudio.com/items?itemName=waderyan.gitblame) , If possible, please support it
