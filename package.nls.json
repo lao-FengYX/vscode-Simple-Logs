@@ -3,5 +3,7 @@
   "simple-logs.backgroundColor": "backgroundColor",
   "simple-logs.excludePath": "Ignored paths (separated by commas)",
   "simple-logs.useCustomaryWording": "Using local customary wording",
-  "simple-logs.showInfo": "Custom Display Information"
+  "simple-logs.showInfo": "Custom Display Information",
+  "simple-logs.showUncommittedInfo": "Unsubmitted information displayed",
+  "simple-logs.onlyShowUncommittedInfo": "Display only unsubmitted information"
 }

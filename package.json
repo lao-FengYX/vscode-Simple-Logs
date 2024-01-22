@@ -37,6 +37,12 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "commands":[
+      {
+        "command": "simple-logs.clearCache",
+        "title": "Simple Logs: clearCache"
+      }
+    ],
     "configuration": {
       "title": "Simple Logs",
       "properties": {
@@ -62,6 +68,16 @@
           "type": "string",
           "default": "${committer}, ${committer-time} • ${summary}",
           "description": "%simple-logs.showInfo%"
+        },
+        "simple-logs.showUncommittedInfo": {
+          "type": "string",
+          "default": "Uncommitted changes",
+          "description": "%simple-logs.showUncommittedInfo%"
+        },
+        "simple-logs.onlyShowUncommittedInfo": {
+          "type": "boolean",
+          "default": true,
+          "description": "%simple-logs.onlyShowUncommittedInfo%"
         }
       }
     }

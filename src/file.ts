@@ -1,12 +1,6 @@
 import { Disposable, TextEditor, window, workspace } from 'vscode'
 import { formatDate } from './date'
-import {
-  getBlame,
-  getGitFolder,
-  getRelativePath,
-  validHash,
-  validUncommittedHash
-} from './gitcommand'
+import { getBlame, getGitFolder, validHash, validUncommittedHash } from './gitcommand'
 import { Logger } from './logger'
 import { UserInfo, getUserInfo } from './userInfo'
 import { debounce, getActiveEditor, getConfig, validParentPathStart } from './utils'
@@ -14,9 +8,16 @@ import { View } from './view'
 
 let userInfo: UserInfo
 let view = new View()
+// 需要忽略的路径
 let excludePath = getConfig('excludePath').split(',')
+// 是否使用当前习惯用语
 let useCustomaryWording = getConfig('useCustomaryWording')
+// 显示的信息
 let showInfo = getConfig('showInfo')
+// 显示的未提交的信息
+let showUncommittedInfo = getConfig('showUncommittedInfo')
+// 是否只显示未提交的信息
+let onlyShowUncommittedInfo = getConfig('onlyShowUncommittedInfo')
 
 type LineInfo = {
   'hash': string
@@ -55,6 +56,8 @@ export class File {
           excludePath = getConfig('excludePath').split(',')
           useCustomaryWording = getConfig('useCustomaryWording')
           showInfo = getConfig('showInfo')
+          showUncommittedInfo = getConfig('showUncommittedInfo')
+          onlyShowUncommittedInfo = getConfig('onlyShowUncommittedInfo')
         }
       }),
       window.onDidChangeActiveTextEditor(e => {
@@ -65,10 +68,8 @@ export class File {
       window.onDidChangeTextEditorSelection(({ textEditor }) => {
         const { scheme } = textEditor.document.uri
         if (scheme === 'file' || scheme === 'untitled') {
-          let parentPath = workspace.workspaceFolders?.[0].uri.fsPath || ''
-          const path = getRelativePath(textEditor.document.fileName, parentPath)
           if (this.isEdit) return
-          this.selectChange(path, true)
+          this.selectChange(textEditor.document.fileName, true)
         }
       }),
       // workspace.onDidSaveTextDocument(() => {
@@ -81,9 +82,7 @@ export class File {
       //     return
       //   }
 
-      //   let dir = workspace.workspaceFolders?.[0].uri.fsPath || ''
-      //   const path = getRelativePath(document.fileName, dir)
-      //   fileBlame.delete(path)
+      //   this.fileBlame.delete(document.fileName)
       // }),
       workspace.onDidChangeTextDocument(({ contentChanges, document }) => {
         let editor = getActiveEditor()
@@ -131,31 +130,34 @@ export class File {
 
     if (!Reflect.ownKeys(obj).length) {
       Logger.info('No information for current file')
-      return
+
+      this.lineBlame = new Map<string, LineInfo>()
+      for (let i = 1; i < editor.document.lineCount + 1; i++) {
+        this.lineBlame.set(i + '', this.commitInfo(true))
+      }
+    } else {
+      this.blameProcess(obj)
     }
 
-    this.blameProcess(obj)
-
-    const path = getRelativePath(filePath, parentPath)
-    this.fileBlame.set(path, this.lineBlame)
+    this.fileBlame.set(filePath, this.lineBlame)
 
     this.isExecute = false
 
-    this.selectChange(path, removeDecoration)
+    this.selectChange(filePath, removeDecoration)
   }
 
-  private commitInfo = (): LineInfo => ({
-    'hash': '',
-    's-hash': '',
-    'author': '',
-    'author-mail': '',
-    'author-time': '',
-    'author-tz': '',
-    'committer': '',
-    'committer-mail': '',
-    'committer-time': '',
-    'committer-tz': '',
-    'summary': ''
+  private commitInfo = (need?: boolean): LineInfo => ({
+    'hash': need ? '0'.padEnd(40, '0') : '',
+    's-hash': need ? '0'.padEnd(7, '0') : '',
+    'author': need ? userInfo.name ?? '' : '',
+    'author-mail': need ? userInfo.email ?? '' : '',
+    'author-time': need ? +new Date() / 1000 + '' : '',
+    'author-tz': need ? '+0800' : '',
+    'committer': need ? userInfo.name ?? '' : '',
+    'committer-mail': need ? userInfo.email ?? '' : '',
+    'committer-time': need ? +new Date() / 1000 + '' : '',
+    'committer-tz': need ? '+0800' : '',
+    'summary': need ? showUncommittedInfo ?? '' : ''
   })
 
   private createLineObj = (): Line => ({
@@ -224,7 +226,7 @@ export class File {
       if (validUncommittedHash(temp.hash)) {
         temp.author = temp.committer = userInfo.name
         temp['author-mail'] = temp['committer-mail'] = userInfo.email
-        temp.summary = 'Uncommitted changes'
+        temp.summary = showUncommittedInfo
       }
       this.lineBlame.set(parseInt(line.result) + i + '', temp)
     }
@@ -234,7 +236,7 @@ export class File {
     let editor = getActiveEditor()
     if (!editor) return
     let map = this.fileBlame.get(path)
-    if (!map) return
+    // if (!map) return
 
     removeDecoration ? view.removeDclearecoration() : null
 
@@ -244,15 +246,30 @@ export class File {
 
     let findObj = map?.get(line + '')
     if (findObj) {
-      let info = showInfo.replace(/\$\{(.*?)\}/g, (_, key) => {
-        if (findObj) {
-          return this.organizeInformation(findObj, key?.trim() ?? key)
-        }
-        return ''
-      })
+      let info: string = this.getShowInfo(findObj)
 
       view.createTextDecoration(info, editor, line - 1)
     }
+  }
+
+  private getShowInfo(findObj: LineInfo): string {
+    let info = ''
+    // 当前不是未提交更改
+    if (!validUncommittedHash(findObj.hash)) {
+      info = this.handleShowInfo(findObj)
+    } else {
+      info = onlyShowUncommittedInfo ? showUncommittedInfo : this.handleShowInfo(findObj)
+    }
+    return info
+  }
+
+  private handleShowInfo(findObj: LineInfo) {
+    return showInfo.replace(/\$\{(.*?)\}/g, (_, key) => {
+      if (findObj) {
+        return this.organizeInformation(findObj, key?.trim() ?? key)
+      }
+      return ''
+    })
   }
 
   private organizeInformation(findObj: LineInfo, token: string): string {
@@ -280,10 +297,19 @@ export class File {
     return length ? findObj?.[key]?.slice(0, parseInt(length)) ?? '' : findObj?.[key] ?? ''
   }
 
-  public dispose(): void {
-    File.instance = undefined
+  public clearCache(reBlame?: boolean) {
     this.lineBlame = new Map<string, LineInfo>()
     this.fileBlame = new Map<string, Map<string, LineInfo>>()
+
+    let editor = getActiveEditor()
+    if (reBlame && editor) {
+      this.handlerFile(editor.document.fileName)
+    }
+  }
+
+  public dispose(): void {
+    File.instance = undefined
+    this.clearCache()
     this.disposeable.dispose()
   }
 }

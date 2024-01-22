@@ -12,6 +12,8 @@ type Config = {
   excludePath: string
   useCustomaryWording: boolean
   showInfo: string
+  showUncommittedInfo: string
+  onlyShowUncommittedInfo: boolean
 }
 
 /** 获取配置 */

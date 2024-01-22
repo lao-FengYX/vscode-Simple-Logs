@@ -7,6 +7,12 @@ export async function activate(context: vscode.ExtensionContext) {
   if (!editor) return
 
   File.getInstance().handlerFile(editor.document.fileName)
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('simple-logs.clearCache', () => {
+      File.getInstance().clearCache(true)
+    })
+  )
 }
 
 export function deactivate() {
