@@ -14,7 +14,7 @@ export class View {
   private decorationType: TextEditorDecorationType
   private fontColor: string
   private bgcColor: string
-  private static instance: View
+  private static instance?: View
 
   constructor() {
     this.decorationType = window.createTextEditorDecorationType({
@@ -63,6 +63,7 @@ export class View {
   }
 
   public dispose(): void {
+    View.instance = undefined
     this.configChange.dispose()
     this.decorationType.dispose()
   }
