@@ -8,7 +8,7 @@ import { View } from './view'
 import { sep } from 'path'
 
 let userInfo: UserInfo
-let view = new View()
+let view = View.getInstance()
 // 需要忽略的路径
 let excludePath = getConfig('excludePath').split(',')
 // 是否使用当前习惯用语

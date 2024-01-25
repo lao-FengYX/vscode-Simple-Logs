@@ -14,6 +14,7 @@ export class View {
   private decorationType: TextEditorDecorationType
   private fontColor: string
   private bgcColor: string
+  private static instance: View
 
   constructor() {
     this.decorationType = window.createTextEditorDecorationType({
@@ -30,6 +31,11 @@ export class View {
         this.bgcColor = getConfig('backgroundColor').split(';')[0]
       }
     })
+  }
+
+  static getInstance(): View {
+    View.instance ??= new View()
+    return View.instance
   }
 
   public async createTextDecoration(text: string, editor: TextEditor, line: number): Promise<void> {
