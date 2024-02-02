@@ -1,10 +1,10 @@
 import { window, workspace, TextEditor } from 'vscode'
 
 /** 获取激活的编辑器 */
-export const getActiveEditor = () => window.activeTextEditor
+export const getActiveEditor = (): TextEditor | undefined => window.activeTextEditor
 
 /** 验证文件 */
-export const validScheme = (editor: TextEditor) => editor.document.uri.scheme === 'file'
+export const validScheme = (editor: TextEditor): boolean => editor.document.uri.scheme === 'file'
 
 type Config = {
   fontColor: string

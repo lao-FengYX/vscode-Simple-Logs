@@ -41,6 +41,10 @@ type Line = {
   'count': string
 }
 
+type StringMatrixMap = {
+  [key: string]: string[][]
+}
+
 export class File {
   private isExecute: boolean = false // 是否正在执行
   private disposeable: Disposable
@@ -134,7 +138,7 @@ export class File {
 
       this.lineBlame = new Map<string, LineInfo>()
       for (let i = 1; i < editor.document.lineCount + 1; i++) {
-        this.lineBlame.set(i + '', this.commitInfo(true))
+        this.lineBlame.set(i + '', this.createUncommittedInfo())
       }
     } else {
       this.blameProcess(obj)
@@ -147,18 +151,32 @@ export class File {
     this.selectChange(filePath, removeDecoration)
   }
 
-  private commitInfo = (need?: boolean): LineInfo => ({
-    'hash': need ? '0'.padEnd(40, '0') : '',
-    's-hash': need ? '0'.padEnd(7, '0') : '',
-    'author': need ? userInfo.name ?? '' : '',
-    'author-mail': need ? userInfo.email ?? '' : '',
-    'author-time': need ? +new Date() / 1000 + '' : '',
-    'author-tz': need ? '+0800' : '',
-    'committer': need ? userInfo.name ?? '' : '',
-    'committer-mail': need ? userInfo.email ?? '' : '',
-    'committer-time': need ? +new Date() / 1000 + '' : '',
-    'committer-tz': need ? '+0800' : '',
-    'summary': need ? showUncommittedInfo ?? '' : ''
+  private createCommitInfo = (): LineInfo => ({
+    'hash': '',
+    's-hash': '',
+    'author': '',
+    'author-mail': '',
+    'author-time': '',
+    'author-tz': '',
+    'committer': '',
+    'committer-mail': '',
+    'committer-time': '',
+    'committer-tz': '',
+    'summary': ''
+  })
+
+  private createUncommittedInfo = (): LineInfo => ({
+    'hash': '0'.padEnd(40, '0'),
+    's-hash': '0'.padEnd(7, '0'),
+    'author': userInfo.name ?? '',
+    'author-mail': userInfo.email ?? '',
+    'author-time': +new Date() / 1000 + '',
+    'author-tz': '+0800',
+    'committer': userInfo.name ?? '',
+    'committer-mail': userInfo.email ?? '',
+    'committer-time': +new Date() / 1000 + '',
+    'committer-tz': '+0800',
+    'summary': showUncommittedInfo ?? ''
   })
 
   private createLineObj = (): Line => ({
@@ -167,8 +185,8 @@ export class File {
     'count': ''
   })
 
-  private chunkArr = (arr: string[][]) => {
-    let obj: { [key: string]: string[][] } = {}
+  private chunkArr(arr: string[][]): StringMatrixMap {
+    let obj: StringMatrixMap = {}
     let indexArr = arr
       .map((item, index) => (validHash(item?.[0]) ? index + '' : undefined))
       .filter(Boolean) as string[]
@@ -193,12 +211,12 @@ export class File {
     return obj
   }
 
-  private blameProcess = (obj: { [key: string]: string[][] }): void => {
+  private blameProcess(obj: StringMatrixMap): void {
     this.lineBlame = new Map<string, LineInfo>()
 
     for (const key in obj) {
       let arr = obj[key]
-      let temp: LineInfo = this.commitInfo()
+      let temp: LineInfo = this.createCommitInfo()
       let lineObj = this.createLineObj()
       for (const [name, val] of arr) {
         if (['filename', 'boundary', 'previous'].includes(name)) continue
@@ -222,7 +240,7 @@ export class File {
     }
   }
 
-  private loopSetLineBlame = (line: Line, temp: LineInfo): void => {
+  private loopSetLineBlame(line: Line, temp: LineInfo): void {
     for (let i = 0; i < parseInt(line.count); i++) {
       if (validUncommittedHash(temp.hash)) {
         temp.author = temp.committer = userInfo.name
@@ -233,7 +251,7 @@ export class File {
     }
   }
 
-  private selectChange = (path: string, removeDecoration = true): void => {
+  private selectChange(path: string, removeDecoration = true): void {
     let editor = getActiveEditor()
     if (!editor) return
     let map = this.fileBlame.get(path)
@@ -264,7 +282,7 @@ export class File {
     return info
   }
 
-  private handleShowInfo(findObj: LineInfo) {
+  private handleShowInfo(findObj: LineInfo): string {
     return showInfo.replace(/\$\{(.*?)\}/g, (_, key) => {
       if (findObj) {
         return this.organizeInformation(findObj, key?.trim() ?? key)
@@ -277,7 +295,7 @@ export class File {
     let key = token.split('|')[0].trim()
     let length = token.split('|')?.[1]?.trim?.() ?? undefined
 
-    let keys = Object.keys(this.commitInfo())
+    let keys = Object.keys(this.createCommitInfo())
     if (!keys.includes(key)) {
       return ''
     }
@@ -298,7 +316,7 @@ export class File {
     return length ? findObj?.[key]?.slice(0, parseInt(length)) ?? '' : findObj?.[key] ?? ''
   }
 
-  public clearCache(reBlame?: boolean) {
+  public clearCache(reBlame?: boolean): void {
     this.lineBlame = new Map<string, LineInfo>()
     this.fileBlame = new Map<string, Map<string, LineInfo>>()
 
